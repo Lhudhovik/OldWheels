@@ -19,6 +19,7 @@ public class NetworkConnection : MonoBehaviour {
     public bool usePassword;
     public string password;
     public string sceneOnDisconnect;
+    private NetworkView m_NetwordView;
 
     int lastLevelPrefix = 0;
 
@@ -27,11 +28,17 @@ public class NetworkConnection : MonoBehaviour {
 
 	void Start () {
         playerName = "OldWheels-"+UtilsC.CreateRandomString(5); //Default Random Player Name
-
+        DontDestroyOnLoad(this);
+        m_NetwordView = GetComponent<NetworkView>();
+        m_NetwordView.group = 1;
+        Application.LoadLevel(sceneOnDisconnect);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+        if (UtilsC.CheckPeerType(NetworkPeerType.Disconnected) && UtilsC.IsHostsExists())
+        {
+            hostData = MasterServer.PollHostList();
+        }
 	}
 }
